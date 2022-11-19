@@ -35,3 +35,4 @@ git commit -m "<commit name>"
 ```
 git push origin develop
 ```
+- Don't forget to change properties in config.yaml: ```user```, ```password```, ```database```

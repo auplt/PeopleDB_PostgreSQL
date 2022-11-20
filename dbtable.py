@@ -14,13 +14,13 @@ class DbTable:
         return {"test": ["integer", "PRIMARY KEY"]}
 
     def column_names(self):
-        return sorted(self.columns().keys(), key=lambda x: x)
+        return list(self.columns().keys())
 
     def primary_key(self):
         return ['id']
 
     def column_names_without_id(self):
-        res = sorted(self.columns().keys(), key=lambda x: x)
+        res = list(self.columns().keys())
         if 'id' in res:
             res.remove('id')
         return res
@@ -30,14 +30,14 @@ class DbTable:
 
     def create(self):
         sql = "CREATE TABLE " + self.table_name() + "("
-        arr = [k + " " + " ".join(v) for k, v in sorted(self.columns().items(), key=lambda x: x[0])]
+        arr = [k + " " + " ".join(v) for k, v in list(self.columns().items())]
         sql += ", ".join(arr + self.table_constraints())
         sql += ")"
+        print(sql)
         cur = self.dbconn.conn.cursor()
         cur.execute(sql)
         self.dbconn.conn.commit()
         return
-
     def drop(self):
         sql = "DROP TABLE IF EXISTS " + self.table_name()
         cur = self.dbconn.conn.cursor()

@@ -17,7 +17,7 @@ class PhonesTable(DbTable):
 
     def all_by_person_id(self, pid):
         sql = "SELECT * FROM " + self.table_name()
-        sql += " WHERE person_id = :id"
+        sql += " WHERE person_id = %(id)s"
         sql += " ORDER BY "
         sql += ", ".join(self.primary_key())
         cur = self.dbconn.conn.cursor()
@@ -36,7 +36,7 @@ class PhonesTable(DbTable):
         cur = self.dbconn.conn.cursor()
         cur.execute(f'SELECT phone FROM {self.table_name()} WHERE person_id = :id', {'id': int(pid)})
         result = cur.fetchall()
-        print(result)
+        # print(result)
         for i in result:
             # print(i, tel)
             if str(tel) == i[0]:
@@ -52,12 +52,20 @@ class PhonesTable(DbTable):
     def delete_phone(self, tel):
         sql = "DELETE FROM " + self.table_name()
         sql += " WHERE person_id=" + self.primary_key()[0]
-        print(sql)
+        # print(sql)
         sql += " AND phone=:tell"
         # sql+= " IN PhonesTable.phone"
         cur = self.dbconn.conn.cursor()
         cur.execute(sql, {"tell": str(tel)})
         # {"offset": num - 1}
-        print(sql)
+        # print(sql)
+        self.dbconn.conn.commit()
+        return
+
+    def update_phone(self, tel, new_tel):
+        cur = self.dbconn.conn.cursor()
+        cur.execute(f"UPDATE {self.table_name()} SET phone=:new_tel WHERE person_id={self.primary_key()[0]} AND phone=:tel", {'tel': str(tel), 'new_tel': str(new_tel)})
+        print(self.primary_key())
+        print(f"UPDATE {self.table_name()} SET phone=:tel WHERE person_id={self.primary_key()[0]} AND phone=:new_tel", {'tel': str(tel), 'new_tel': str(new_tel)})
         self.dbconn.conn.commit()
         return

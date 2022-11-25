@@ -15,4 +15,4 @@ class ProjectConfig:
 
 if __name__ == "__main__":
     x = ProjectConfig()
-    print(x.dbfilepath)
+    print(x.password)

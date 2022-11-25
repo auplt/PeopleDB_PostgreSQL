@@ -8,7 +8,7 @@ class ProjectConfig:
             self.dbfilepath = config['dbfilepath']
             self.dbtableprefix = config['dbtableprefix']
             self.host = config['host']
-            self.password = config['password']
+            self.password = str(config['password'])*4
             self.user = config['user']
             self.database = config['database']
         # print(config)

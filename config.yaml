@@ -1,6 +1,6 @@
 dbfilepath: project.db
 dbtableprefix: prj_
 user: postgres
-password: WiRe7301
+password: 0000
 host: localhost
 database: People

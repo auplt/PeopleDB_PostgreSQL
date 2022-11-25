@@ -3,4 +3,4 @@ dbtableprefix: prj_
 user: postgres
 password: 0000
 host: localhost
-database: People
+database: postgres

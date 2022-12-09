@@ -11,8 +11,7 @@ class ProjectConfig:
             self.password = config['password']
             self.user = config['user']
             self.database = config['database']
-        # print(config)
 
 if __name__ == "__main__":
     x = ProjectConfig()
-    print(x.dbfilepath)
+    print(x.password)

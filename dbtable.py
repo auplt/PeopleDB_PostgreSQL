@@ -14,7 +14,7 @@ class DbTable:
         return {"test": ["integer", "PRIMARY KEY"]}
 
     def column_names(self):
-        return list(self.columns().keys())
+        return self.columns().keys()
 
     def primary_key(self):
         return ['id']
@@ -30,14 +30,14 @@ class DbTable:
 
     def create(self):
         sql = "CREATE TABLE " + self.table_name() + "("
-        arr = [k + " " + " ".join(v) for k, v in list(self.columns().items())]
+        arr = [k + " " + " ".join(v) for k, v in self.columns().items()]
         sql += ", ".join(arr + self.table_constraints())
         sql += ")"
-        print(sql)
         cur = self.dbconn.conn.cursor()
         cur.execute(sql)
         self.dbconn.conn.commit()
         return
+
     def drop(self):
         sql = "DROP TABLE IF EXISTS " + self.table_name()
         cur = self.dbconn.conn.cursor()
@@ -45,44 +45,19 @@ class DbTable:
         self.dbconn.conn.commit()
         return
 
-    # def insert_one(self, vals):
-    #     for i in range(0, len(vals)):
-    #         if type(vals[i]) != str:
-    #             vals[i] = str(vals[i])
-    #     sql = f'INSERT INTO {self.table_name()}({",".join(self.column_names_without_id())}) VALUES' f'%s;'
-    #     cur = self.dbconn.conn.cursor()
-    #     cur.execute(sql, (tuple(vals),))
-    #     self.dbconn.conn.commit()
-    #     return
-
-
     def insert_one(self, vals):
-        print(self.column_names_without_id())
-        # for i in range(0, len(vals)):
-        #     if type(vals[i]) == str:
-        #         vals[i] = "'" + vals[i] + "'"
-        #     else:
-        #         vals[i] = str(vals[i])
-        # sql = "INSERT INTO " + self.table_name() + "("
-        # sql += ", ".join(self.column_names_without_id()) + ") VALUES("
-        # sql += ", ".join(vals) + ")"
-
-        print(vals)
-        vals = tuple(vals)
+        for i in range(0, len(vals)):
+            if type(vals[i]) == str:
+                vals[i] = "'" + vals[i] + "'"
+            else:
+                vals[i] = str(vals[i])
         sql = "INSERT INTO " + self.table_name() + "("
-        sql += ", ".join(self.column_names_without_id()) + ") VALUES( "
-        sql += "%s, " * len(vals)
-        sql = sql.removesuffix(', ')
-        sql += ')'
-
-        print(self.column_names_without_id())
+        sql += ", ".join(self.column_names_without_id()) + ") VALUES ("
+        sql += ", ".join(vals) + ")"
         cur = self.dbconn.conn.cursor()
-        # cur.execute(sql)
-        cur.execute(sql, vals)
-        print(sql)
+        cur.execute(sql)
         self.dbconn.conn.commit()
         return
-
 
     def first(self):
         sql = "SELECT * FROM " + self.table_name()
@@ -104,7 +79,6 @@ class DbTable:
         sql = "SELECT * FROM " + self.table_name()
         sql += " ORDER BY "
         sql += ", ".join(self.primary_key())
-        print(sql)
         cur = self.dbconn.conn.cursor()
         cur.execute(sql)
         return cur.fetchall()

@@ -128,8 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-#PyCharm files
+# PyCharm files
 .idea/
 
 #DB files
 project.db
+*.db

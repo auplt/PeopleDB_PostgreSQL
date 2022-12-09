@@ -46,16 +46,14 @@ class DbTable:
         return
 
     def insert_one(self, vals):
-        for i in range(0, len(vals)):
-            if type(vals[i]) == str:
-                vals[i] = "'" + vals[i] + "'"
-            else:
-                vals[i] = str(vals[i])
+        vals = tuple(vals)
         sql = "INSERT INTO " + self.table_name() + "("
-        sql += ", ".join(self.column_names_without_id()) + ") VALUES ("
-        sql += ", ".join(vals) + ")"
+        sql += ", ".join(self.column_names_without_id()) + ") VALUES( "
+        sql += "%s, " * len(vals)
+        sql = sql.removesuffix(', ')
+        sql += ')'
         cur = self.dbconn.conn.cursor()
-        cur.execute(sql)
+        cur.execute(sql, vals)
         self.dbconn.conn.commit()
         return
 

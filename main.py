@@ -34,6 +34,16 @@ def int_format_check(num):
     except ValueError:
         return False
 
+def number_check(num):
+    try:
+        int(num)
+        num = int(num)
+    except ValueError:
+        return False
+    if num <= 0:
+        return False
+    else:
+        return True
 
 class Main:
     config = ProjectConfig()
@@ -123,6 +133,11 @@ class Main:
                 "Число страниц должно быть числом! Повторно введите количество записей на странице (-1 - отмена): ")
             if lim == -1:
                 return
+        while not number_check(lim):
+            lim = input(
+                "Число страниц должно быть положительно! Повторно введите количество записей на странице (-1 - отмена): ")
+            if lim == -1:
+                return
 
         menu = """Дальнейшие операции: 
     1 - вывести следующую страницу;
@@ -142,9 +157,10 @@ class Main:
 
             elif stage == "1":
                 page = int(page)
-                if (page + 1) * int(lim) < int(rows_total[0] + int(lim) - 1):
+                if (page + 1) * int(lim) <= int(rows_total[0] + int(lim) - 1):
                     page += 1
                     t = 1
+                    lst = PeopleTable().print_list(int(lim), page * int(lim) - int(lim))
                     print(f"Страница {page}")
                     print("{:<10}{:<20}{:<20}{:<20}".format("№", "Фамилия", "Имя", "Отчество"))
                     for i in lst:
@@ -152,6 +168,18 @@ class Main:
                         t += 1
                 else:
                     print(f"Страница {page} была последней")
+
+                    if lim == "1":
+                        l_page = int(rows_total[0]) // int(lim)
+                    else:
+                        l_page = (int(rows_total[0]) + 1) // int(lim)
+                    t = 1
+                    lst = PeopleTable().print_list(int(lim), l_page * int(lim) - int(lim))
+                    print(f"Страница {l_page}")
+                    print("{:<10}{:<20}{:<20}{:<20}".format("№", "Фамилия", "Имя", "Отчество"))
+                    for i in lst:
+                        print(f"{(l_page - 1) * int(lim) + t:<10}{i[1]:<20}{i[2]:<20}{i[3]:<20}")
+                        t += 1
                 print(menu)
 
             elif stage == "2":
@@ -166,14 +194,27 @@ class Main:
                         print(f"{(page - 1) * int(lim) + t:<10}{i[1]:<20}{i[2]:<20}{i[3]:<20}")
                         t += 1
                 else:
-                    print(f"Страница {page} была последней")
+                    print(f"Страница {page} первая")
+                    f_page = 1
+                    t = 1
+                    lst = PeopleTable().print_list(int(lim), f_page * int(lim) - int(lim))
+                    print(f"Страница {f_page}")
+                    print("{:<10}{:<20}{:<20}{:<20}".format("№", "Фамилия", "Имя", "Отчество"))
+                    for i in lst:
+                        print(f"{(f_page - 1) * int(lim) + t:<10}{i[1]:<20}{i[2]:<20}{i[3]:<20}")
+                        t += 1
                 print(menu)
 
             elif stage == "3":
                 prev_page = page
-                print(
-                    f"Введите номер страницы в диапазоне {1} - {(int(rows_total[0]) + 1) // int(lim)} (-1 - отмена): ",
-                    end='')
+                if lim == "1":
+                    print(
+                        f"Введите номер страницы в диапазоне {1} - {int(rows_total[0]) // int(lim)} (-1 - отмена): ",
+                        end='')
+                else:
+                    print(
+                        f"Введите номер страницы в диапазоне {1} - {(int(rows_total[0]) + 1) // int(lim)} (-1 - отмена): ",
+                        end='')
                 page = input()
                 if lim == -1:
                     page = prev_page
@@ -184,7 +225,7 @@ class Main:
                     if lim == -1:
                         page = prev_page
                         return
-                if (0 < int(page) and int(page) <= (rows_total[0] + 1) // int(lim)):
+                if (lim != "1" and 0 < int(page) and int(page) <= (rows_total[0] + 1) // int(lim)):
                     t = 1
                     lst = PeopleTable().print_list(int(lim), int(page) * int(lim) - int(lim))
                     print(f"Страница {page}")
@@ -192,7 +233,14 @@ class Main:
                     for i in lst:
                         print(f"{(int(page) - 1) * int(lim) + t:<10}{i[1]:<20}{i[2]:<20}{i[3]:<20}")
                         t += 1
-
+                elif (lim == "1" and 0 < int(page) and int(page) <= rows_total[0] // int(lim)):
+                    t = 1
+                    lst = PeopleTable().print_list(int(lim), int(page) * int(lim) - int(lim))
+                    print(f"Страница {page}")
+                    print("{:<10}{:<20}{:<20}{:<20}".format("№", "Фамилия", "Имя", "Отчество"))
+                    for i in lst:
+                        print(f"{(int(page) - 1) * int(lim) + t:<10}{i[1]:<20}{i[2]:<20}{i[3]:<20}")
+                        t += 1
                 else:
                     print(f"Страницы {page} не существует")
                     page = prev_page
@@ -206,6 +254,12 @@ class Main:
                         "Число страниц должно быть числом! Повторно введите количество записей на странице (-1 - отмена): ")
                     if lim == -1:
                         return
+                while not number_check(lim):
+                    lim = input(
+                        "Число страниц должно быть положительно! Повторно введите количество записей на странице (-1 - отмена): ")
+                    if lim == -1:
+                        return
+                page = 0
                 print(menu)
 
             else:
